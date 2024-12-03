@@ -1,0 +1,75 @@
+Ejercicio 2 Gestión de directorios 
+
+Programa de Gestión de Directorios en Python
+
+Aquí te dejo un código en Python que cumple con los requisitos del proyecto:
+
+python
+
+import os
+import argparse
+
+def listar_directorio(ruta, recursivo=False, sangria=0):
+    """
+    Lista el contenido de un directorio, indicando si cada elemento es un archivo o directorio,
+    y su tamaño en kilobytes.
+
+    Args:
+        ruta (str): La ruta del directorio que se quiere listar.
+        recursivo (bool): Si es True, lista el contenido de los subdirectorios recursivamente.
+        sangria (int): El número de tabuladores para indentar la salida en la lista recursiva.
+    """
+    # Iteramos sobre el contenido del directorio
+    for elemento in os.listdir(ruta):
+        ruta_elemento = os.path.join(ruta, elemento)
+        if os.path.isfile(ruta_elemento):
+            # Si es un archivo, imprimimos su nombre, tipo y tamaño en kilobytes
+            print(f"{'\t' * sangria}{elemento} (Archivo) - {os.path.getsize(ruta_elemento) / 1024:.2f} KB")
+        elif os.path.isdir(ruta_elemento):
+            # Si es un directorio, imprimimos su nombre y tipo
+            print(f"{'\t' * sangria}{elemento} (Directorio)")
+            if recursivo:
+                # Si se ha especificado la opción recursiva, llamamos a la función nuevamente
+                # con la ruta del subdirectorio y aumentamos la sangría
+                listar_directorio(ruta_elemento, recursivo=True, sangria=sangria + 1)
+
+def main():
+    # Creamos un objeto parser para analizar los argumentos de la línea de comandos
+    parser = argparse.ArgumentParser(description="Programa de Gestión de Directorios")
+    parser.add_argument("ruta", help="La ruta del directorio que se quiere listar")
+    parser.add_argument("-r", "--recursivo", action="store_true", help="Lista el contenido recursivamente")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.ruta):
+        print(f"Error: La ruta '{args.ruta}' no existe")
+        return
+
+    if not os.path.isdir(args.ruta):
+        print(f"Error: La ruta '{args.ruta}' no es un directorio")
+        return
+
+    # Llamamos a la función listar_directorio con los argumentos parseados
+    listar_directorio(args.ruta, recursivo=args.recursivo)
+
+if __name__ == "__main__":
+    main()
+
+Explicación
+
+El código define una función listar_directorio que toma tres argumentos:
+
+ruta: La ruta del directorio que se quiere listar.
+recursivo: Un booleano que indica si se debe listar el contenido de los subdirectorios recursivamente.
+sangria: Un entero que indica el número de tabuladores para indentar la salida en la lista recursiva.
+
+La función itera sobre el contenido del directorio utilizando os.listdir. Para cada elemento, verifica si es un archivo o directorio utilizando os.path.isfile y os.path.isdir. Si es un archivo, imprime el nombre del archivo, su tipo y tamaño en kilobytes. Si es un directorio, imprime el nombre del directorio y su tipo, y si recursivo es True, llama a la función nuevamente con la ruta del subdirectorio y aumenta la sangría.
+
+La función main analiza los argumentos de la línea de comandos utilizando argparse. Verifica si la ruta proporcionada existe y es un directorio, y luego llama a listar_directorio con los argumentos parseados.
+
+Uso
+
+Para utilizar el programa, guárdalo en un archivo (por ejemplo, gestor_directorios.py) y ejecútalo desde la línea de comandos:
+$ python gestor_directorios.py /ruta/al/directorio
+
+Para listar el contenido recursivamente, use la opción -r o --recursivo:
+$ python gestor_directorios.py /ruta/al/directorio -r
